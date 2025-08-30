@@ -254,7 +254,7 @@
     // Fetch and populate quizzes
     async function loadQuizzes() {
       try {
-        const response = await fetch(config.getApiUrl('/api/quizzes', {
+        const response = await fetch(config.getApiUrl('/api/quizzes'), {
           headers: getAuthHeaders()
         });
         if (!response.ok) {

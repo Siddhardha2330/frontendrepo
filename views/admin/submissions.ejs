@@ -1,18 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Submissions - Admin Dashboard</title>
-  <script src="/config.js"></script>
-  <style>
-    body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) fixed;
-      min-height: 100vh;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
+<style>
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) fixed;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
 .container {
   max-width: 700px;
   margin: 40px auto;
@@ -79,7 +72,7 @@ td {
 </table>
 </div>
 <script>
-fetch(config.getApiUrl('/api/admin/submissions'), { headers: config.getAuthHeaders() })
+fetch('/api/admin/submissions', { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') } })
   .then(res => res.json())
   .then(data => {
     const tbody = document.getElementById('submissionsTable');
@@ -89,6 +82,4 @@ fetch(config.getApiUrl('/api/admin/submissions'), { headers: config.getAuthHeade
       tbody.appendChild(tr);
     });
   });
-</script>
-</body>
-</html> 
+</script> 

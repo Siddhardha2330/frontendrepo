@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - QuizPlatform</title>
-  <script src="/config.js"></script>
   <style>
     * {
       margin: 0;
@@ -576,8 +575,10 @@
       if (!checkAuth()) return;
 
       try {
-        const response = await fetch(config.getApiUrl('/api/quizzes'), {
-          headers: config.getAuthHeaders()
+        const response = await fetch('/api/quizzes', {
+          headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+          }
         });
 
         if (!response.ok) {
@@ -691,9 +692,11 @@
       if (!checkAuth()) return;
 
       try {
-        const response = await fetch(config.getApiUrl('/api/quizzes/' + quizId), {
+        const response = await fetch('/api/quizzes/' + quizId, {
           method: 'DELETE',
-          headers: config.getAuthHeaders()
+          headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+          }
         });
 
         if (response.ok) {
@@ -719,9 +722,11 @@
       if (!checkAuth()) return;
 
       try {
-        const response = await fetch(config.getApiUrl('/api/quizzes/create-sample-data'), {
+        const response = await fetch('/api/quizzes/create-sample-data', {
           method: 'POST',
-          headers: config.getAuthHeaders()
+          headers: {
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
+          }
         });
 
         if (response.ok) {
