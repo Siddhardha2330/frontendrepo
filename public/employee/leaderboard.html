@@ -103,27 +103,32 @@
     <div id="noLeaderboardMsg" class="no-leaderboard" style="display:none;">No leaderboard data yet.</div>
   </div>
   <script>
-    // Wait for config to be loaded
-    function waitForConfig() {
-      return new Promise((resolve) => {
-        if (typeof config !== 'undefined') {
-          resolve();
-        } else {
-          const checkConfig = () => {
-            if (typeof config !== 'undefined') {
-              resolve();
-            } else {
-              setTimeout(checkConfig, 100);
-            }
-          };
-          checkConfig();
-        }
-      });
+    // Check if config is loaded, if not, load it manually
+    if (typeof config === 'undefined') {
+      console.log('Config not found, loading manually...');
+      const script = document.createElement('script');
+      script.src = '/config.js';
+      script.onload = function() {
+        console.log('Config loaded manually');
+        loadLeaderboard();
+      };
+      script.onerror = function() {
+        console.error('Failed to load config.js');
+        document.getElementById('noLeaderboardMsg').textContent = 'Failed to load configuration.';
+        document.getElementById('noLeaderboardMsg').style.display = 'block';
+      };
+      document.head.appendChild(script);
+    } else {
+      loadLeaderboard();
     }
 
     async function loadLeaderboard() {
       try {
-        await waitForConfig();
+        // Check if config is available
+        if (typeof config === 'undefined') {
+          throw new Error('Config not available');
+        }
+        
         const res = await fetch(config.getApiUrl('/api/quizzes/leaderboard'), {
           headers: config.getAuthHeaders()
         });
@@ -153,7 +158,6 @@
         document.getElementById('noLeaderboardMsg').style.display = 'block';
       }
     }
-    document.addEventListener('DOMContentLoaded', loadLeaderboard);
   </script>
 </body>
 </html> 
