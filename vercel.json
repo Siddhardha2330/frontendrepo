@@ -1,0 +1,43 @@
+{
+  "rewrites": [
+    {
+      "source": "/admin/dashboard",
+      "destination": "/admin/dashboard.html"
+    },
+    {
+      "source": "/admin/profile",
+      "destination": "/admin/profile.html"
+    },
+    {
+      "source": "/admin/submissions",
+      "destination": "/admin/submissions.html"
+    },
+    {
+      "source": "/admin/manageQuiz",
+      "destination": "/admin/manageQuiz.html"
+    },
+    {
+      "source": "/admin/leaderboard",
+      "destination": "/admin/leaderboard.html"
+    },
+    {
+      "source": "/employee/(.*)",
+      "destination": "/employee/$1.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ]
+}
