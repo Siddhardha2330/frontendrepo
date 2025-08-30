@@ -86,7 +86,7 @@ td {
 </table>
 </div>
 <script>
-fetch(config.getApiUrl('/api/quizzes', { headers: config.getAuthHeaders() })
+fetch(config.getApiUrl('/api/quizzes'), { headers: config.getAuthHeaders() })
   .then(res => res.json())
   .then(data => {
     const select = document.getElementById('quizSelect');
@@ -102,7 +102,7 @@ fetch(config.getApiUrl('/api/quizzes', { headers: config.getAuthHeaders() })
 
 function loadLeaderboard() {
   const quizId = document.getElementById('quizSelect').value;
-  fetch(config.getApiUrl('/api/admin/leaderboard/' + quizId, { headers: config.getAuthHeaders() })
+  fetch(config.getApiUrl('/api/admin/leaderboard/' + quizId), { headers: config.getAuthHeaders() })
     .then(res => res.json())
     .then(data => {
       const tbody = document.getElementById('leaderboardTable');

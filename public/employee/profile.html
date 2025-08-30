@@ -140,7 +140,7 @@
         return;
       }
       try {
-        const res = await fetch(config.getApiUrl('/api/quizzes/change-password', {
+        const res = await fetch(config.getApiUrl('/api/quizzes/change-password'), {
           method: 'POST',
           headers: config.getAuthHeaders(),
           body: JSON.stringify({ oldPassword, newPassword })

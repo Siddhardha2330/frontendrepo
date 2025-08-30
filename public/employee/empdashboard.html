@@ -256,7 +256,7 @@
         // Fetch and render stats
         async function loadStats() {
           try {
-            const res = await fetch(config.getApiUrl('/api/quizzes/employee-stats', {
+            const res = await fetch(config.getApiUrl('/api/quizzes/employee-stats'), {
               headers: config.getAuthHeaders()
             });
             if (!res.ok) throw new Error('Failed to fetch stats');
@@ -288,7 +288,7 @@
         // Fetch and render available quizzes
         async function loadAvailableQuizzes() {
           try {
-            const res = await fetch(config.getApiUrl('/api/quizzes/available', {
+            const res = await fetch(config.getApiUrl('/api/quizzes/available'), {
               headers: config.getAuthHeaders()
             });
             if (!res.ok) throw new Error('Failed to fetch quizzes');

@@ -215,9 +215,9 @@
     async function fetchQuizAndAttempts() {
       // Fetch quiz details and questions
       const [quizRes, questionsRes, attemptsRes] = await Promise.all([
-        fetch(config.getApiUrl(`/api/quizzes/available`, { headers: config.getAuthHeaders() }),
-        fetch(config.getApiUrl(`/api/quizzes/${quizId}/questions`, { headers: config.getAuthHeaders() }),
-        fetch(config.getApiUrl(`/api/quizzes/${quizId}/attempts`, { headers: config.getAuthHeaders() })
+        fetch(config.getApiUrl(`/api/quizzes/available`), { headers: config.getAuthHeaders() }),
+        fetch(config.getApiUrl(`/api/quizzes/${quizId}/questions`), { headers: config.getAuthHeaders() }),
+        fetch(config.getApiUrl(`/api/quizzes/${quizId}/attempts`), { headers: config.getAuthHeaders() })
       ]);
       const quizList = await quizRes.json();
       quiz = (quizList.data || []).find(q => q.id == quizId);
@@ -327,7 +327,7 @@
       });
       // Save submission
       try {
-        await fetch(config.getApiUrl(`/api/quizzes/${quizId}/submit`, {
+        await fetch(config.getApiUrl(`/api/quizzes/${quizId}/submit`), {
           method: 'POST',
           headers: config.getAuthHeaders(),
           body: JSON.stringify({ score, total: questions.length, results })

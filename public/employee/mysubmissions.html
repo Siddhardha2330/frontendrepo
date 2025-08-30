@@ -108,7 +108,7 @@
         console.log('Token from localStorage:', token);
         const authHeader = 'Bearer ' + token;
         console.log('Authorization header:', authHeader);
-        const res = await fetch(config.getApiUrl('/api/quizzes/my-submissions', {
+        const res = await fetch(config.getApiUrl('/api/quizzes/my-submissions'), {
           headers: { 'Authorization': authHeader }
         });
         if (!res.ok) throw new Error('Failed to fetch submissions');
