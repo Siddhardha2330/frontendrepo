@@ -127,11 +127,18 @@
         script.src = '/config.js';
         script.onload = function() {
           console.log('Real config loaded successfully');
-          if (typeof config !== 'undefined') {
-            localConfig = config;
-            console.log('Config object updated:', localConfig);
-          }
-          resolve();
+          // Wait a bit for the script to execute
+          setTimeout(() => {
+            try {
+              if (typeof window.config !== 'undefined') {
+                localConfig = window.config;
+                console.log('Config object updated:', localConfig);
+              }
+            } catch (e) {
+              console.log('Config not available, using fallback');
+            }
+            resolve();
+          }, 100);
         };
         script.onerror = function() {
           console.error('Failed to load config.js, using fallback');
