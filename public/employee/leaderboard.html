@@ -103,24 +103,38 @@
     <div id="noLeaderboardMsg" class="no-leaderboard" style="display:none;">No leaderboard data yet.</div>
   </div>
   <script>
-    // Check if config is loaded, if not, load it manually
-    if (typeof config === 'undefined') {
-      console.log('Config not found, loading manually...');
-      const script = document.createElement('script');
-      script.src = '/config.js';
-      script.onload = function() {
-        console.log('Config loaded manually');
-        loadLeaderboard();
-      };
-      script.onerror = function() {
-        console.error('Failed to load config.js');
-        document.getElementById('noLeaderboardMsg').textContent = 'Failed to load configuration.';
-        document.getElementById('noLeaderboardMsg').style.display = 'block';
-      };
-      document.head.appendChild(script);
-    } else {
-      loadLeaderboard();
+    // Safely check if config is loaded
+    function isConfigLoaded() {
+      try {
+        return typeof config !== 'undefined';
+      } catch (e) {
+        return false;
+      }
     }
+
+    // Load config if not available
+    function loadConfigIfNeeded() {
+      if (!isConfigLoaded()) {
+        console.log('Config not found, loading manually...');
+        const script = document.createElement('script');
+        script.src = '/config.js';
+        script.onload = function() {
+          console.log('Config loaded manually');
+          loadLeaderboard();
+        };
+        script.onerror = function() {
+          console.error('Failed to load config.js');
+          document.getElementById('noLeaderboardMsg').textContent = 'Failed to load configuration.';
+          document.getElementById('noLeaderboardMsg').style.display = 'block';
+        };
+        document.head.appendChild(script);
+      } else {
+        loadLeaderboard();
+      }
+    }
+
+    // Start the process
+    loadConfigIfNeeded();
 
     async function loadLeaderboard() {
       try {
