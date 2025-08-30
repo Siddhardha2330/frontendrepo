@@ -261,11 +261,6 @@
 
   <script>
     let quizzes = [];
-    let currentQuiz = null;
-    let currentQuizQuestions = [];
-    let marks = 0;
-    let timerInterval = null;
-    let timeLeft = 0;
 
     // Fetch quizzes from API
     async function fetchQuizzes() {
@@ -308,133 +303,11 @@
       });
     }
 
-    // Open modal to attempt quiz
-    async function openQuizModal(quizId) {
-      currentQuiz = quizzes.find(q => q.id == quizId);
-      if (!currentQuiz) return;
-      // Fetch questions for this quiz (if not already included)
-      let questions = currentQuiz.questions;
-      if (!questions) {
-        // Fetch from API
-        try {
-          const res = await fetch(config.getApiUrl(`/api/quizzes/${quizId}/questions`), {
-            headers: config.getAuthHeaders()
-          });
-          if (!res.ok) throw new Error('Failed to fetch questions');
-          questions = await res.json();
-        } catch (err) {
-          alert('Could not load quiz questions.');
-          return;
-        }
-      }
-      currentQuizQuestions = questions;
-      renderQuizQuestions();
-      document.getElementById('quizModal').classList.remove('hidden');
-      // Start timer
-      startTimer(currentQuiz.duration * 60); // duration is in minutes
-    }
 
-    function closeQuizModal() {
-      document.getElementById('quizModal').classList.add('hidden');
-      document.getElementById('quizForm').reset();
-      clearInterval(timerInterval);
-      document.getElementById('timer').textContent = '';
-    }
 
-    function closeResultsModal() {
-      document.getElementById('resultsModal').classList.add('hidden');
-    }
 
-    // Render questions in modal
-    function renderQuizQuestions() {
-      const questionsDiv = document.getElementById('quizQuestions');
-      questionsDiv.innerHTML = '';
-      currentQuizQuestions.forEach((q, idx) => {
-        const options = q.options.map((opt, i) =>
-          `<label><input type="radio" name="q${idx}" value="${i}" required> ${opt}</label>`
-        ).join('');
-        questionsDiv.innerHTML += `
-          <div class="quiz-question">${idx + 1}. ${q.question}</div>
-          <div class="quiz-options">${options}</div>
-        `;
-      });
-    }
 
-    function startTimer(seconds) {
-      timeLeft = seconds;
-      updateTimerDisplay();
-      clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        updateTimerDisplay();
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          autoSubmitQuiz();
-        }
-      }, 1000);
-    }
 
-    function updateTimerDisplay() {
-      const min = Math.floor(timeLeft / 60);
-      const sec = timeLeft % 60;
-      document.getElementById('timer').textContent = `Time Left: ${min}:${sec.toString().padStart(2, '0')}`;
-    }
-
-    function autoSubmitQuiz() {
-      // Auto-submit the quiz when time is up
-      if (!document.getElementById('quizModal').classList.contains('hidden')) {
-        document.getElementById('quizForm').requestSubmit();
-      }
-    }
-
-    // Handle quiz submission
-    document.getElementById('quizForm').onsubmit = async function(e) {
-      e.preventDefault();
-      clearInterval(timerInterval);
-      let score = 0;
-      const form = e.target;
-      let results = [];
-      currentQuizQuestions.forEach((q, idx) => {
-        const selected = form[`q${idx}`] ? form[`q${idx}`].value : null;
-        const correct = parseInt(selected) === q.correctAnswer;
-        if (correct) score++;
-        results.push({
-          question: q.question,
-          selected: selected !== null ? q.options[selected] : null,
-          correctAnswer: q.options[q.correctAnswer],
-          explanation: q.explanation || '',
-          isCorrect: correct
-        });
-      });
-      marks = score;
-      closeQuizModal();
-      showResults(results, score, currentQuizQuestions.length);
-      // Optionally, send submission to backend
-      try {
-        await fetch(config.getApiUrl(`/api/quizzes/${currentQuiz.id}/submit`), {
-          method: 'POST',
-          headers: config.getAuthHeaders(),
-          body: JSON.stringify({ score, total: currentQuizQuestions.length, results })
-        });
-      } catch (err) {}
-    };
-
-    function showResults(results, score, total) {
-      const resultsModal = document.getElementById('resultsModal');
-      const resultsContent = document.getElementById('resultsContent');
-      resultsContent.innerHTML = `<div style='text-align:center;font-size:1.2rem;margin-bottom:18px;'>You scored <span style="color:#6b46c1;">${score}</span> out of <span style="color:#6b46c1;">${total}</span>!</div>`;
-      results.forEach((r, idx) => {
-        resultsContent.innerHTML += `
-          <div style="margin-bottom:18px;padding:14px 12px;border-radius:8px;background:${r.isCorrect ? '#d1fae5' : '#fee2e2'};">
-            <div style="font-weight:600;">${idx + 1}. ${r.question}</div>
-            <div>Your answer: <b>${r.selected !== null ? r.selected : '<i>Not answered</i>'}</b></div>
-            <div>Correct answer: <b>${r.correctAnswer}</b></div>
-            <div style="color:#6b7280;">Explanation: ${r.explanation || 'No explanation provided.'}</div>
-          </div>
-        `;
-      });
-      resultsModal.classList.remove('hidden');
-    }
 
     // Initial fetch
     fetchQuizzes();
