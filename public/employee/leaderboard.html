@@ -103,48 +103,63 @@
     <div id="noLeaderboardMsg" class="no-leaderboard" style="display:none;">No leaderboard data yet.</div>
   </div>
   <script>
-    // Safely check if config is loaded
-    function isConfigLoaded() {
-      try {
-        return typeof config !== 'undefined';
-      } catch (e) {
-        return false;
+    console.log('Script starting...');
+    
+    // Define our own config object as fallback
+    let localConfig = {
+      API_BASE_URL: 'https://backendrepo-ev4f.onrender.com',
+      getApiUrl: function(endpoint) {
+        return this.API_BASE_URL + endpoint;
+      },
+      getAuthHeaders: function() {
+        const token = localStorage.getItem('token');
+        return {
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
+        };
       }
-    }
+    };
 
-    // Load config if not available
-    function loadConfigIfNeeded() {
-      if (!isConfigLoaded()) {
-        console.log('Config not found, loading manually...');
+    // Function to load the real config
+    function loadRealConfig() {
+      console.log('Attempting to load real config...');
+      return new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = '/config.js';
         script.onload = function() {
-          console.log('Config loaded manually');
-          loadLeaderboard();
+          console.log('Real config loaded successfully');
+          if (typeof config !== 'undefined') {
+            localConfig = config;
+            console.log('Config object updated:', localConfig);
+          }
+          resolve();
         };
         script.onerror = function() {
-          console.error('Failed to load config.js');
-          document.getElementById('noLeaderboardMsg').textContent = 'Failed to load configuration.';
-          document.getElementById('noLeaderboardMsg').style.display = 'block';
+          console.error('Failed to load config.js, using fallback');
+          reject(new Error('Config load failed'));
         };
         document.head.appendChild(script);
-      } else {
+      });
+    }
+
+    // Initialize the page
+    async function initializePage() {
+      console.log('Initializing page...');
+      try {
+        await loadRealConfig();
+        console.log('Config loaded, calling loadLeaderboard');
+        loadLeaderboard();
+      } catch (error) {
+        console.log('Using fallback config:', error.message);
         loadLeaderboard();
       }
     }
 
-    // Start the process
-    loadConfigIfNeeded();
-
     async function loadLeaderboard() {
+      console.log('loadLeaderboard called, using config:', localConfig);
       try {
-        // Check if config is available
-        if (typeof config === 'undefined') {
-          throw new Error('Config not available');
-        }
-        
-        const res = await fetch(config.getApiUrl('/api/quizzes/leaderboard'), {
-          headers: config.getAuthHeaders()
+        const res = await fetch(localConfig.getApiUrl('/api/quizzes/leaderboard'), {
+          headers: localConfig.getAuthHeaders()
         });
         if (!res.ok) throw new Error('Failed to fetch leaderboard');
         const result = await res.json();
@@ -172,6 +187,10 @@
         document.getElementById('noLeaderboardMsg').style.display = 'block';
       }
     }
+
+    // Start the initialization
+    console.log('Starting page initialization...');
+    initializePage();
   </script>
 </body>
 </html> 
