@@ -203,7 +203,7 @@
     <div id="quizContent"></div>
   </div>
   <script>
-    const quizId = '';
+    const quizId = new URLSearchParams(window.location.search).get('id') || '';
     let quiz = null;
     let questions = [];
     let attemptsLeft = 3;

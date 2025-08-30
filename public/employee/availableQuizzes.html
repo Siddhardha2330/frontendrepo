@@ -302,7 +302,7 @@
             <span>${quiz.category}</span>
           </div>
           <div class="quiz-meta">Duration: ${quiz.duration} min</div>
-          <a href="/employee/attempt/${quiz.id}.html" class="attempt-btn">Attempt Quiz</a>
+          <a href="/employee/attemptQuiz.html?id=${quiz.id}" class="attempt-btn">Attempt Quiz</a>
         `;
         quizList.appendChild(card);
       });

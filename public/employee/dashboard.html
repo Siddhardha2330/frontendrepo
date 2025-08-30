@@ -222,7 +222,7 @@
         <div class="logo">QuizPlatform</div>
         <a href="#" class="active">🏠 Dashboard</a>
         <a href="/employee/availableQuizzes.html">📝 Available Quizzes</a>
-        <a href="/employee/mySubmissions.html">📄 My Submissions</a>
+        <a href="/employee/mysubmissions.html">📄 My Submissions</a>
         <a href="/employee/leaderboard.html">🏆 Leaderboard</a>
         <a href="/employee/profile.html">👤 Profile</a>
     </div>
@@ -318,7 +318,7 @@
                   <span>★</span> ${quiz.rating !== undefined ? quiz.rating : 0}
                 </div>
                 <span class="category">${quiz.category || 'General'}</span>
-                <a href="/employee/attempt/${quiz.id}.html" class="attempt-btn">Attempt Quiz</a>
+                <a href="/employee/attemptQuiz.html?id=${quiz.id}" class="attempt-btn">Attempt Quiz</a>
               `;
               grid.appendChild(card);
             });
