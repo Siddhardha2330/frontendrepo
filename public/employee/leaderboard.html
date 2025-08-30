@@ -103,8 +103,27 @@
     <div id="noLeaderboardMsg" class="no-leaderboard" style="display:none;">No leaderboard data yet.</div>
   </div>
   <script>
+    // Wait for config to be loaded
+    function waitForConfig() {
+      return new Promise((resolve) => {
+        if (typeof config !== 'undefined') {
+          resolve();
+        } else {
+          const checkConfig = () => {
+            if (typeof config !== 'undefined') {
+              resolve();
+            } else {
+              setTimeout(checkConfig, 100);
+            }
+          };
+          checkConfig();
+        }
+      });
+    }
+
     async function loadLeaderboard() {
       try {
+        await waitForConfig();
         const res = await fetch(config.getApiUrl('/api/quizzes/leaderboard'), {
           headers: config.getAuthHeaders()
         });
